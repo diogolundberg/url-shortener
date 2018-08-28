@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,11 +66,30 @@ public class UrlIdGeneratorTest {
     }
 
     @Test
-    public void shouldIncreaseByOneAndReturnUrlIds() {
+    public void shouldIncreaseByOne() {
         Stream.of("1", "2", "3", "4").forEach(id -> {
-            assertThat(urlIdGenerator.generateId()).isEqualTo(id);
+            urlIdGenerator.generateId();
             assertThat(stringRedisTemplate.opsForValue().get("ids:url")).isEqualTo(id);
         });
+    }
+
+    @Test
+    public void shouldTranslateIds() {
+        IntStream.range(1, UrlIdGenerator.ALPHABET.length).forEach(index ->{
+            String expected = Character.toString(UrlIdGenerator.ALPHABET[index]);
+            assertThat(urlIdGenerator.generateId()).isEqualTo(expected);
+        });
+    }
+
+    @Test
+    public void shouldIncreaseOneAndTranslateIdToABase64Dictionary() {
+        char zero = UrlIdGenerator.ALPHABET[0];
+        char one = UrlIdGenerator.ALPHABET[1];
+        String expected = String.format("%s%s%s%s%s", one, zero, zero, zero, zero);
+        stringRedisTemplate.opsForValue().increment("ids:url", Math.pow(64, 4) - 1);
+
+        assertThat(UrlIdGenerator.ALPHABET.length).isEqualTo(64);
+        assertThat(urlIdGenerator.generateId()).isEqualTo(expected);
     }
 }
 
