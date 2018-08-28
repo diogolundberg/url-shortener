@@ -9,12 +9,16 @@ class UrlService {
     @Autowired
     private UrlIdGenerator urlIdGenerator;
 
+    @Autowired
+    private UrlRepository urlRepository;
+
     public Url shorten(String longUrl) {
-        String shortUrl = urlIdGenerator.generateId();
+        String id = urlIdGenerator.generateId();
         Url url = Url.builder()
+                .id(id)
                 .longUrl(longUrl)
-                .shortUrl(shortUrl)
+                .shortUrl(id)
                 .build();
-        return url;
+        return urlRepository.save(url);
     }
 }

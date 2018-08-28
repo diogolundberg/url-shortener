@@ -19,6 +19,7 @@ public class UrlJsonTests {
     @Test
     public void serializeJson() throws Exception {
         Url url = Url.builder()
+                .id("generated_id")
                 .longUrl("www.longurl.com")
                 .shortUrl("short")
                 .build();
@@ -28,5 +29,6 @@ public class UrlJsonTests {
         assertThat(json.write(url)).extractingJsonPathStringValue("$.longUrl").isEqualTo("www.longurl.com");
         assertThat(json.write(url)).hasJsonPathStringValue("$.shortUrl");
         assertThat(json.write(url)).extractingJsonPathStringValue("$.shortUrl").isEqualTo("short");
+        assertThat(json.write(url)).doesNotHaveJsonPathValue("$.id");
     }
 }
