@@ -24,6 +24,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-redis')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.testcontainers:vault:1.8.3')
+    compileOnly('org.projectlombok:lombok:1.18.2')
 }
 
 wrapper { gradleVersion = '4.9' }
