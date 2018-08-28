@@ -11,7 +11,10 @@ class UrlService {
 
     public Url shorten(String longUrl) {
         String shortUrl = urlIdGenerator.generateId();
-        Url url = new Url(longUrl, shortUrl);
+        Url url = Url.builder()
+                .longUrl(longUrl)
+                .shortUrl(shortUrl)
+                .build();
         return url;
     }
 }

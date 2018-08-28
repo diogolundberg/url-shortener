@@ -22,11 +22,12 @@ public class UrlServiceTests {
 
     @Test
     public void shortenShouldReturnGeneratedId() {
-        Url expected = new Url("url", "generated_id");
-        Url result = service.shorten("url");
+        Url expected = Url.builder()
+                .longUrl("url")
+                .shortUrl("generated_id")
+                .build();
         given(urlIdGenerator.generateId()).willReturn("generated_id");
 
-        assertThat(result.getShortUrl()).isEqualTo(expected.getShortUrl());
-        assertThat(result.getLongUrl()).isEqualTo(expected.getLongUrl());
+        assertThat(service.shorten("url")).isEqualTo(expected);
     }
 }

@@ -1,19 +1,11 @@
 package lundberg.urlshortener.url;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
 class Url {
-    private final String shortUrl;
     private final String longUrl;
-
-    public Url(String longUrl, String shortUrl) {
-        this.longUrl = longUrl;
-        this.shortUrl = shortUrl;
-    }
-
-    public String getLongUrl() {
-        return longUrl;
-    }
-
-    public String getShortUrl() {
-        return shortUrl;
-    }
+    private final String shortUrl;
 }
