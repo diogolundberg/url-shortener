@@ -1,11 +1,12 @@
 package lundberg.urlshortener.url;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,27 +18,57 @@ import static org.mockito.Mockito.verify;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UrlServiceTests {
-
-    @MockBean
+    @Mock
     private UrlIdGenerator urlIdGenerator;
 
-    @MockBean
+    @Mock
     private UrlRepository urlRepository;
 
-    @Autowired
+    private MockHttpServletRequest request;
+
     private UrlService service;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        request = new MockHttpServletRequest();
+        request.setServerName("name");
+        request.setScheme("scheme");
+        request.setServerPort(123);
+        this.service = new UrlService(urlIdGenerator, urlRepository, request);
+    }
 
     private Url url = Url.builder()
             .id("generated_id")
             .longUrl("url")
-            .shortUrl("generated_id")
+            .localUrl("scheme://name:123")
             .build();
 
     @Test
     public void shortenPersistUrlWithdGeneratedId() {
         given(urlIdGenerator.generateId()).willReturn("generated_id");
-
         service.shorten("url");
+
+        verify(urlRepository, times(1)).save(url);
+    }
+
+    @Test
+    public void shortenHideShortUrlPortWhenDefault() {
+        given(urlIdGenerator.generateId()).willReturn("generated_id");
+        request.setServerPort(80);
+        url.setLocalUrl("scheme://name");
+        service.shorten("url");
+
+        verify(urlRepository, times(1)).save(url);
+    }
+
+    @Test
+    public void shortenHideShortUrlPortWhenSSLDefault() {
+        given(urlIdGenerator.generateId()).willReturn("generated_id");
+        request.setServerPort(443);
+        url.setLocalUrl("scheme://name");
+        service.shorten("url");
+
         verify(urlRepository, times(1)).save(url);
     }
 

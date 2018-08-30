@@ -31,8 +31,9 @@ public class UrlControllerTest {
     public void shorten() throws Exception {
         UrlParams params = new UrlParams("www.longurl.com");
         Url response = Url.builder()
+                .id("id")
                 .longUrl("www.longurl.com")
-                .shortUrl("short")
+                .localUrl("localhost")
                 .build();
 
         given(this.urlService.shorten("www.longurl.com")).willReturn(response);
@@ -41,6 +42,6 @@ public class UrlControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.longUrl").value("www.longurl.com"))
-                .andExpect(jsonPath("$.shortUrl").value("short"));
+                .andExpect(jsonPath("$.shortUrl").value("localhost/id"));
     }
 }

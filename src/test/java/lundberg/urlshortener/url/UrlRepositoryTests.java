@@ -47,7 +47,6 @@ public class UrlRepositoryTests {
     private Url url = Url.builder()
             .id("generated_id")
             .longUrl("www.longurl.com")
-            .shortUrl("shortened")
             .build();
 
     @Test
@@ -55,9 +54,9 @@ public class UrlRepositoryTests {
         String key = String.format("url:%s", url.getId());
         urlRepository.save(url);
 
+        assertThat(stringRedisTemplate.opsForHash().keys(key)).containsOnly("_class", "id", "longUrl");
         assertThat(stringRedisTemplate.opsForHash().get(key, "id")).isEqualTo(url.getId());
         assertThat(stringRedisTemplate.opsForHash().get(key, "longUrl")).isEqualTo(url.getLongUrl());
-        assertThat(stringRedisTemplate.opsForHash().get(key, "shortUrl")).isEqualTo(url.getShortUrl());
     }
 
     @Test

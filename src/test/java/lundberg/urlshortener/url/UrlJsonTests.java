@@ -21,14 +21,15 @@ public class UrlJsonTests {
         Url url = Url.builder()
                 .id("generated_id")
                 .longUrl("www.longurl.com")
-                .shortUrl("short")
+                .localUrl("hostname")
                 .build();
         assertThat(json.write(url)).isEqualTo("url.json");
-        assertThat(json.write(url)).isEqualToJson("url.json");
+        assertThat(json.write(url)).isStrictlyEqualToJson("url.json");
         assertThat(json.write(url)).hasJsonPathStringValue("$.longUrl");
         assertThat(json.write(url)).extractingJsonPathStringValue("$.longUrl").isEqualTo("www.longurl.com");
         assertThat(json.write(url)).hasJsonPathStringValue("$.shortUrl");
-        assertThat(json.write(url)).extractingJsonPathStringValue("$.shortUrl").isEqualTo("short");
+        assertThat(json.write(url)).extractingJsonPathStringValue("$.shortUrl").isEqualTo("hostname/generated_id");
         assertThat(json.write(url)).doesNotHaveJsonPathValue("$.id");
+        assertThat(json.write(url)).doesNotHaveJsonPathValue("$.localUrl");
     }
 }
