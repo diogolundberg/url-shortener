@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,5 +44,13 @@ public class UrlControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.longUrl").value("www.longurl.com"))
                 .andExpect(jsonPath("$.shortUrl").value("localhost/id"));
+    }
+
+    @Test
+    public void redirect() throws Exception {
+        given(this.urlService.enlarge("1")).willReturn("redirected_url");
+        mockMvc.perform(get("/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("redirected_url"));
     }
 }

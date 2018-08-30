@@ -23,6 +23,11 @@ class UrlService {
         return urlRepository.save(url);
     }
 
+    public String enlarge(String id) {
+        String url = urlRepository.findById(id).get().getLongUrl();
+        return url.matches("^(https?)://.*$") ? url : String.format("https://%s", url);
+    }
+
     private String local() {
         int serverPort = request.getServerPort();
         String scheme = request.getScheme();

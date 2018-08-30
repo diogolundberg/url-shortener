@@ -9,11 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -77,5 +78,21 @@ public class UrlServiceTests {
         given(urlRepository.save(any())).willReturn(url);
 
         assertThat(service.shorten("url")).isEqualTo(url);
+    }
+
+    @Test
+    public void enlargeReturnUrlWithProtocol() {
+        url.setLongUrl("no_protocol");
+        when(urlRepository.findById("id")).thenReturn(Optional.of(url));
+
+        assertThat(service.enlarge("id")).isEqualTo("https://no_protocol");
+    }
+
+    @Test
+    public void enlargeReturnUrlWhenHasAlreadyHttpProtocol() {
+        url.setLongUrl("http://only_http");
+        when(urlRepository.findById("id")).thenReturn(Optional.of(url));
+
+        assertThat(service.enlarge("id")).isEqualTo("http://only_http");
     }
 }
