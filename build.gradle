@@ -27,4 +27,4 @@ dependencies {
     compileOnly('org.projectlombok:lombok:1.18.2')
 }
 
-wrapper { gradleVersion = '4.9' }
+wrapper { gradleVersion = '4.10' }
