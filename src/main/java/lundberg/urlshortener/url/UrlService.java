@@ -1,10 +1,13 @@
 package lundberg.urlshortener.url;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,8 +27,12 @@ class UrlService {
     }
 
     public String enlarge(String id) {
-        String url = urlRepository.findById(id).get().getLongUrl();
-        return url.matches("^(https?)://.*$") ? url : String.format("https://%s", url);
+        Optional<Url> url = urlRepository.findById(id);
+        if (url.isPresent()) {
+            String longUrl = url.get().getLongUrl();
+            return longUrl.matches("^(https?)://.*$") ? longUrl : String.format("https://%s", longUrl);
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Url not found");
     }
 
     private String local() {

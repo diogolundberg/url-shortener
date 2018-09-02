@@ -8,10 +8,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -94,5 +96,13 @@ public class UrlServiceTests {
         when(urlRepository.findById("id")).thenReturn(Optional.of(url));
 
         assertThat(service.enlarge("id")).isEqualTo("http://only_http");
+    }
+
+    @Test
+    public void enlargeThrowExceptionWhenIdNotFound() {
+        url.setLongUrl("http://only_http");
+        when(urlRepository.findById("id")).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResponseStatusException.class).isThrownBy(() -> service.enlarge("id"));
     }
 }

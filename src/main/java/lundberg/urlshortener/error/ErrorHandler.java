@@ -14,6 +14,15 @@ import static org.springframework.web.servlet.HandlerMapping.PATH_WITHIN_HANDLER
 
 @ControllerAdvice
 class ErrorHandler extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(ResponseStatusException.class)
+    public final ResponseEntity<Object> handleNotFoundException(ResponseStatusException exception, WebRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpStatus status = exception.getStatus();
+        String message = exception.getReason();
+        Error error = buildError(Error.builder().message(message), status, request);
+        return handleExceptionInternal(exception, error, headers, status, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Object error = body == null ? buildError(Error.builder(), status, request) : body;
