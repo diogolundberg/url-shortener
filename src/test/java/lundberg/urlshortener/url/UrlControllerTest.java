@@ -34,19 +34,19 @@ public class UrlControllerTest {
 
     @Test
     public void shorten() throws Exception {
-        UrlParams params = new UrlParams("www.longurl.com");
+        UrlParams params = new UrlParams("http://www.longurl.com");
         Url response = Url.builder()
                 .id("id")
-                .longUrl("www.longurl.com")
+                .longUrl("http://www.longurl.com")
                 .localUrl("localhost")
                 .build();
 
-        given(this.urlService.shorten("www.longurl.com")).willReturn(response);
+        given(this.urlService.shorten("http://www.longurl.com")).willReturn(response);
         mockMvc.perform(post("/shorten").contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content(objectMapper.writeValueAsString(params)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.longUrl").value("www.longurl.com"))
+                .andExpect(jsonPath("$.longUrl").value("http://www.longurl.com"))
                 .andExpect(jsonPath("$.shortUrl").value("localhost/id"));
     }
 
@@ -65,5 +65,16 @@ public class UrlControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.message").value("message"));
+    }
+
+    @Test
+    public void invalidParams() throws Exception {
+        UrlParams params = new UrlParams("invalid_url");
+
+        mockMvc.perform(post("/shorten").contentType(APPLICATION_JSON_UTF8_VALUE)
+                .content(objectMapper.writeValueAsString(params)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.error").value("Bad Request"));
     }
 }
