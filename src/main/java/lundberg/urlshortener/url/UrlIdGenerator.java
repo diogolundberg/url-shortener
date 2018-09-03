@@ -5,15 +5,15 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 class UrlIdGenerator {
-    public static final char[] ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_1234567890".toCharArray();
+    static final char[] ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_1234567890".toCharArray();
     private int base = ALPHABET.length;
     private StringRedisTemplate stringRedisTemplate;
 
-    public UrlIdGenerator(StringRedisTemplate stringRedisTemplate) {
+    UrlIdGenerator(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
-    public String generateId() {
+    String generateId() {
         long id = stringRedisTemplate.opsForValue().increment("ids:url", 1);
         return encode(id, "");
     }

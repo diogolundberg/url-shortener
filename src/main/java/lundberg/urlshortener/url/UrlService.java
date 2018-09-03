@@ -16,7 +16,7 @@ class UrlService {
     private UrlRepository urlRepository;
     private HttpServletRequest request;
 
-    public Url shorten(String longUrl) {
+    Url shorten(String longUrl) {
         String id = urlIdGenerator.generateId();
         Url url = Url.builder()
                 .id(id)
@@ -26,7 +26,7 @@ class UrlService {
         return urlRepository.save(url);
     }
 
-    public String enlarge(String id) {
+    String enlarge(String id) {
         Optional<Url> url = urlRepository.findById(id);
         if (url.isPresent()) {
             String longUrl = url.get().getLongUrl();

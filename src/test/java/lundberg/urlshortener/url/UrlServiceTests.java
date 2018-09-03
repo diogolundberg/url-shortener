@@ -48,7 +48,7 @@ public class UrlServiceTests {
             .build();
 
     @Test
-    public void shortenPersistUrlWithdGeneratedId() {
+    public void shortenPersistUrlWithGeneratedId() {
         given(urlIdGenerator.generateId()).willReturn("generated_id");
         service.shorten("url");
 
