@@ -45,14 +45,3 @@ curl -XPOST localhost:8080/shorten -H 'Content-Type: application/json' -d '{
 ```
 
 [No curl?](https://onlinecurl.com/)
-
-## It's online!
-
-This project has a version hosted as *liy.io*.
-* Access google via shortened address http://liy.io/b
-* Try to shorten an Url:
-```bash
-curl -XPOST http://liy.io/shorten -H 'Content-Type: application/json' -d '{
-  "url": "https://www.example.com/"
-}'
-```
